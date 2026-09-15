@@ -261,6 +261,8 @@
 		D1F6F4FB251050EC00E7C8A6 /* NocturneFavoriteFoodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F4F9251050EC00E7C8A6 /* NocturneFavoriteFoodTests.swift */; };
 		D1F6F4FE251050EC00E7C8A9 /* NocturneFavoriteFoodsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F4FC251050EC00E7C8A7 /* NocturneFavoriteFoodsClient.swift */; };
 		D1F6F4FF251050EC00E7C8AA /* NocturneFavoriteFoodsClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F4FD251050EC00E7C8A8 /* NocturneFavoriteFoodsClientTests.swift */; };
+		D1F6F5012C105A0100E7C8BB /* NocturneFavoritesSectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F5002C105A0100E7C8BB /* NocturneFavoritesSectionViewModel.swift */; };
+		D1F6F5032C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F5022C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift */; };
 		84AA81E72A4A4DEF000B658B /* PumpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AA81E62A4A4DEF000B658B /* PumpView.swift */; };
 		84D2879F2AC756C8007ED283 /* ContentMargin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D2879E2AC756C8007ED283 /* ContentMargin.swift */; };
 		891B508524342BE1005DA578 /* CarbAndBolusFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */; };
@@ -1072,6 +1074,8 @@
 		D1F6F4F9251050EC00E7C8A6 /* NocturneFavoriteFoodTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturneFavoriteFoodTests.swift; sourceTree = "<group>"; };
 		D1F6F4FC251050EC00E7C8A7 /* NocturneFavoriteFoodsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturneFavoriteFoodsClient.swift; sourceTree = "<group>"; };
 		D1F6F4FD251050EC00E7C8A8 /* NocturneFavoriteFoodsClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturneFavoriteFoodsClientTests.swift; sourceTree = "<group>"; };
+		D1F6F5002C105A0100E7C8BB /* NocturneFavoritesSectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturneFavoritesSectionViewModel.swift; sourceTree = "<group>"; };
+		D1F6F5022C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturneFavoritesSectionViewModelTests.swift; sourceTree = "<group>"; };
 		84AA81E62A4A4DEF000B658B /* PumpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PumpView.swift; sourceTree = "<group>"; };
 		84D2879E2AC756C8007ED283 /* ContentMargin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentMargin.swift; sourceTree = "<group>"; };
 		891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarbAndBolusFlowViewModel.swift; sourceTree = "<group>"; };
@@ -2365,6 +2369,7 @@
 				1DB1CA4E24A56D7600B3B94C /* SettingsViewModel.swift */,
 				1D49795724E7289700948F05 /* ServicesViewModel.swift */,
 				C174233B259BEB0F00399C9D /* ManualEntryDoseViewModel.swift */,
+				D1F6F5002C105A0100E7C8BB /* NocturneFavoritesSectionViewModel.swift */,
 				1DB619AB270BAD3D006C9D07 /* VersionUpdateViewModel.swift */,
 				3ED319952EB65A5C00820BCF /* LiveActivityManagementViewModel.swift */,
 			);
@@ -2478,8 +2483,9 @@
 			children = (
 				1D8D55BB252274650044DBB6 /* BolusEntryViewModelTests.swift */,
 				B4BC56372518DEA900373647 /* CGMStatusHUDViewModelTests.swift */,
-				C165756E2534C468004AE16E /* SimpleBolusViewModelTests.swift */,
 				C1777A6525A125F100595963 /* ManualEntryDoseViewModelTests.swift */,
+				D1F6F5022C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift */,
+				C165756E2534C468004AE16E /* SimpleBolusViewModelTests.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -3525,6 +3531,7 @@
 				84AA81E52A4A3981000B658B /* DeeplinkManager.swift in Sources */,
 				D1F6F4FA251050EC00E7C8A5 /* NocturneFavoriteFood.swift in Sources */,
 				D1F6F4FE251050EC00E7C8A9 /* NocturneFavoriteFoodsClient.swift in Sources */,
+				D1F6F5012C105A0100E7C8BB /* NocturneFavoritesSectionViewModel.swift in Sources */,
 				1D6B1B6726866D89009AC446 /* AlertPermissionsChecker.swift in Sources */,
 				4F08DE8F1E7BB871006741EA /* CollectionType+Loop.swift in Sources */,
 				A9F703772489D8AA00C98AD8 /* PersistentDeviceLog+SimulatedCoreData.swift in Sources */,
@@ -3757,6 +3764,7 @@
 				C1D476B42A8ED179002C1C87 /* LoopAlgorithmTests.swift in Sources */,
 				D1F6F4FB251050EC00E7C8A6 /* NocturneFavoriteFoodTests.swift in Sources */,
 				D1F6F4FF251050EC00E7C8AA /* NocturneFavoriteFoodsClientTests.swift in Sources */,
+				D1F6F5032C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift in Sources */,
 				8968B114240C55F10074BB48 /* LoopSettingsTests.swift in Sources */,
 				A9BD28E7272226B40071DF15 /* TestLocalizedError.swift in Sources */,
 				A9F5F1F5251050EC00E7C8A4 /* ZipArchiveTests.swift in Sources */,
