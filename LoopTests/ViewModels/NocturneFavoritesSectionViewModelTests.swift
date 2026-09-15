@@ -3,27 +3,19 @@ import XCTest
 
 @MainActor
 final class NocturneFavoritesSectionViewModelTests: XCTestCase {
-    private struct FakeCredentialsProvider: NocturneCredentialsProviding {
-        let result: Result<(baseURL: URL, apiToken: String), Error>
-        func getNocturneCredentials() throws -> (baseURL: URL, apiToken: String) { try result.get() }
-    }
-
     private final class FakeClient: NocturneFavoriteFoodsClientProtocol {
         var result: Result<[NocturneFavoriteFood], Error> = .success([])
         func fetchFavorites() async throws -> [NocturneFavoriteFood] { try result.get() }
     }
-
-    private struct DummyError: Error {}
 
     private func makeFood(id: String, type: String, name: String, carbs: Double) -> NocturneFavoriteFood {
         NocturneFavoriteFood(id: id, type: type, category: "", subcategory: "", name: name, portion: 1, carbs: carbs, fat: 0, protein: 0, energy: 0, gi: 2, unit: "g")
     }
 
     func testRefreshWithoutCredentialsIsNotConfigured() async {
-        let viewModel = NocturneFavoritesSectionViewModel(
-            client: FakeClient(),
-            credentialsProvider: FakeCredentialsProvider(result: .failure(DummyError()))
-        )
+        let client = FakeClient()
+        client.result = .failure(NocturneFavoriteFoodsClientError.missingCredentials)
+        let viewModel = NocturneFavoritesSectionViewModel(client: client)
 
         await viewModel.refresh()
 
@@ -36,10 +28,7 @@ final class NocturneFavoritesSectionViewModelTests: XCTestCase {
             makeFood(id: "1", type: "food", name: "Toast", carbs: 15),
             makeFood(id: "2", type: "quickpick", name: "Breakfast combo", carbs: 40)
         ])
-        let viewModel = NocturneFavoritesSectionViewModel(
-            client: client,
-            credentialsProvider: FakeCredentialsProvider(result: .success((baseURL: URL(string: "https://nocturne.example.com")!, apiToken: "noc_test")))
-        )
+        let viewModel = NocturneFavoritesSectionViewModel(client: client)
 
         await viewModel.refresh()
 
@@ -50,10 +39,7 @@ final class NocturneFavoritesSectionViewModelTests: XCTestCase {
         struct SomeError: Error {}
         let client = FakeClient()
         client.result = .failure(SomeError())
-        let viewModel = NocturneFavoritesSectionViewModel(
-            client: client,
-            credentialsProvider: FakeCredentialsProvider(result: .success((baseURL: URL(string: "https://nocturne.example.com")!, apiToken: "noc_test")))
-        )
+        let viewModel = NocturneFavoritesSectionViewModel(client: client)
 
         await viewModel.refresh()
 

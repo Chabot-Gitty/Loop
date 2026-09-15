@@ -37,6 +37,7 @@ enum NocturneFavoriteFoodsClientError: Error, Equatable {
     case invalidResponse
     case unauthorized
     case serverError(statusCode: Int)
+    case decodingFailed(String)
 }
 
 protocol NocturneFavoriteFoodsClientProtocol {
@@ -70,7 +71,11 @@ final class NocturneFavoriteFoodsClient: NocturneFavoriteFoodsClientProtocol {
 
         switch httpResponse.statusCode {
         case 200:
-            return try JSONDecoder().decode([NocturneFavoriteFood].self, from: data)
+            do {
+                return try JSONDecoder().decode([NocturneFavoriteFood].self, from: data)
+            } catch {
+                throw NocturneFavoriteFoodsClientError.decodingFailed(String(describing: error))
+            }
         case 401, 403:
             throw NocturneFavoriteFoodsClientError.unauthorized
         default:

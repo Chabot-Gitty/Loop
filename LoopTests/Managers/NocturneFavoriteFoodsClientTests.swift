@@ -103,4 +103,22 @@ final class NocturneFavoriteFoodsClientTests: XCTestCase {
             XCTAssertEqual(statusCode, 500)
         }
     }
+
+    func testFetchFavoritesThrowsDecodingFailedOnMalformedJSON() async throws {
+        let malformedJSON = """
+        { "this is": "not an array of favorites" }
+        """.data(using: .utf8)!
+        let baseURL = URL(string: "https://nocturne.example.com")!
+        let response = HTTPURLResponse(url: baseURL.appendingPathComponent("api/v4/foods/favorites"), statusCode: 200, httpVersion: nil, headerFields: nil)!
+        let session = FakeURLSession(data: malformedJSON, response: response)
+        let credentialsProvider = FakeCredentialsProvider(result: .success((baseURL: baseURL, apiToken: "noc_test")))
+        let client = NocturneFavoriteFoodsClient(credentialsProvider: credentialsProvider, urlSession: session)
+
+        do {
+            _ = try await client.fetchFavorites()
+            XCTFail("Expected decodingFailed error")
+        } catch NocturneFavoriteFoodsClientError.decodingFailed {
+            // expected
+        }
+    }
 }

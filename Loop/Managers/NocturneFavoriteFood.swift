@@ -36,19 +36,22 @@ struct NocturneFavoriteFood: Decodable, Equatable, Identifiable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        // Nocturne's Food.Id is nullable; every real favorite has one, but decode
-        // defensively rather than failing the whole list over one bad record.
+        // Nocturne's Food.Id is nullable, and several of the numeric/string fields
+        // below are nullable in Nocturne's server-side model too. Decode those
+        // defensively with fallbacks rather than failing the whole list over one
+        // bad record. name, type, carbs, and portion are required for a food to be
+        // usable for display, so those stay strict.
         id = try container.decodeIfPresent(String.self, forKey: .id) ?? UUID().uuidString
         type = try container.decode(String.self, forKey: .type)
-        category = try container.decode(String.self, forKey: .category)
-        subcategory = try container.decode(String.self, forKey: .subcategory)
+        category = try container.decodeIfPresent(String.self, forKey: .category) ?? ""
+        subcategory = try container.decodeIfPresent(String.self, forKey: .subcategory) ?? ""
         name = try container.decode(String.self, forKey: .name)
         portion = try container.decode(Double.self, forKey: .portion)
         carbs = try container.decode(Double.self, forKey: .carbs)
-        fat = try container.decode(Double.self, forKey: .fat)
-        protein = try container.decode(Double.self, forKey: .protein)
-        energy = try container.decode(Double.self, forKey: .energy)
-        gi = try container.decode(Int.self, forKey: .gi)
-        unit = try container.decode(String.self, forKey: .unit)
+        fat = try container.decodeIfPresent(Double.self, forKey: .fat) ?? 0
+        protein = try container.decodeIfPresent(Double.self, forKey: .protein) ?? 0
+        energy = try container.decodeIfPresent(Double.self, forKey: .energy) ?? 0
+        gi = try container.decodeIfPresent(Int.self, forKey: .gi) ?? 0
+        unit = try container.decodeIfPresent(String.self, forKey: .unit) ?? ""
     }
 }

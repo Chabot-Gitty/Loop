@@ -80,4 +80,29 @@ final class NocturneFavoriteFoodTests: XCTestCase {
         XCTAssertFalse(food.id.isEmpty)
         XCTAssertEqual(food.name, "No ID Food")
     }
+
+    func testDecodesMissingOptionalFieldsWithDefaults() throws {
+        let json = """
+        {
+          "_id": "def456",
+          "type": "food",
+          "name": "Mystery Bar",
+          "portion": 1,
+          "carbs": 12,
+          "fat": 4
+        }
+        """.data(using: .utf8)!
+
+        let food = try JSONDecoder().decode(NocturneFavoriteFood.self, from: json)
+
+        XCTAssertEqual(food.id, "def456")
+        XCTAssertEqual(food.name, "Mystery Bar")
+        XCTAssertEqual(food.category, "")
+        XCTAssertEqual(food.subcategory, "")
+        XCTAssertEqual(food.unit, "")
+        XCTAssertEqual(food.gi, 0)
+        XCTAssertEqual(food.fat, 4)
+        XCTAssertEqual(food.protein, 0)
+        XCTAssertEqual(food.energy, 0)
+    }
 }
