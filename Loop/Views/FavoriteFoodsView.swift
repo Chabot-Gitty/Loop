@@ -12,8 +12,9 @@ import LoopKitUI
 
 struct FavoriteFoodsView: View {
     @Environment(\.dismissAction) private var dismiss
-    
+
     @StateObject private var viewModel = FavoriteFoodsViewModel()
+    @StateObject private var nocturneViewModel = NocturneFavoritesSectionViewModel()
 
     @State private var foodToConfirmDeleteId: String? = nil
     @State private var editMode: EditMode = .inactive
@@ -39,15 +40,22 @@ struct FavoriteFoodsView: View {
                             .deleteDisabled(true)
                         }
                     }
-                    
+
+                    Section(header: Text("From Nocturne")) {
+                        NocturneFavoritesSectionContent(viewModel: nocturneViewModel)
+                    }
+
                     Section {
                         addFoodButton
                             .listRowInsets(EdgeInsets())
                     }
                 }
                 .insetGroupedListStyle()
-                
-                
+                .task {
+                    await nocturneViewModel.refresh()
+                }
+
+
                 NavigationLink(destination: AddEditFavoriteFoodView(originalFavoriteFood: viewModel.selectedFood, onSave: viewModel.onFoodSave(_:)), isActive: $viewModel.isEditViewActive) {
                     EmptyView()
                 }
