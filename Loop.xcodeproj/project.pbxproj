@@ -265,6 +265,7 @@
 		D1F6F4FF251050EC00E7C8AA /* NocturneFavoriteFoodsClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F4FD251050EC00E7C8A8 /* NocturneFavoriteFoodsClientTests.swift */; };
 		D1F6F5012C105A0100E7C8BB /* NocturneFavoritesSectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F5002C105A0100E7C8BB /* NocturneFavoritesSectionViewModel.swift */; };
 		D1F6F5032C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F5022C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift */; };
+		799CA71E40A5C796C8688AEF /* CarbEntryViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49D0C21390C4B890917F163 /* CarbEntryViewModelTests.swift */; };
 		84AA81E72A4A4DEF000B658B /* PumpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AA81E62A4A4DEF000B658B /* PumpView.swift */; };
 		84D2879F2AC756C8007ED283 /* ContentMargin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D2879E2AC756C8007ED283 /* ContentMargin.swift */; };
 		891B508524342BE1005DA578 /* CarbAndBolusFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */; };
@@ -1080,6 +1081,7 @@
 		D1F6F4FD251050EC00E7C8A8 /* NocturneFavoriteFoodsClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturneFavoriteFoodsClientTests.swift; sourceTree = "<group>"; };
 		D1F6F5002C105A0100E7C8BB /* NocturneFavoritesSectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturneFavoritesSectionViewModel.swift; sourceTree = "<group>"; };
 		D1F6F5022C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturneFavoritesSectionViewModelTests.swift; sourceTree = "<group>"; };
+		A49D0C21390C4B890917F163 /* CarbEntryViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarbEntryViewModelTests.swift; sourceTree = "<group>"; };
 		84AA81E62A4A4DEF000B658B /* PumpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PumpView.swift; sourceTree = "<group>"; };
 		84D2879E2AC756C8007ED283 /* ContentMargin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentMargin.swift; sourceTree = "<group>"; };
 		891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarbAndBolusFlowViewModel.swift; sourceTree = "<group>"; };
@@ -2488,6 +2490,7 @@
 			isa = PBXGroup;
 			children = (
 				1D8D55BB252274650044DBB6 /* BolusEntryViewModelTests.swift */,
+				A49D0C21390C4B890917F163 /* CarbEntryViewModelTests.swift */,
 				B4BC56372518DEA900373647 /* CGMStatusHUDViewModelTests.swift */,
 				C1777A6525A125F100595963 /* ManualEntryDoseViewModelTests.swift */,
 				D1F6F5022C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift */,
@@ -3773,6 +3776,7 @@
 				D1F6F4FB251050EC00E7C8A6 /* NocturneFavoriteFoodTests.swift in Sources */,
 				D1F6F4FF251050EC00E7C8AA /* NocturneFavoriteFoodsClientTests.swift in Sources */,
 				D1F6F5032C105A0100E7C8BB /* NocturneFavoritesSectionViewModelTests.swift in Sources */,
+				799CA71E40A5C796C8688AEF /* CarbEntryViewModelTests.swift in Sources */,
 				8968B114240C55F10074BB48 /* LoopSettingsTests.swift in Sources */,
 				A9BD28E7272226B40071DF15 /* TestLocalizedError.swift in Sources */,
 				A9F5F1F5251050EC00E7C8A4 /* ZipArchiveTests.swift in Sources */,

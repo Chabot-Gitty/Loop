@@ -81,29 +81,36 @@ final class CarbEntryViewModel: ObservableObject {
     
     @Published var favoriteFoods = UserDefaults.standard.favoriteFoods
     @Published var selectedFavoriteFoodIndex = -1
-    
+
+    @Published var nocturneFavoriteFoods: [NocturneFavoriteFood] = []
+    @Published var selectedNocturneFavoriteFoodIndex = -1
+    private let nocturneFavoriteFoodsClient: NocturneFavoriteFoodsClientProtocol
+
     weak var delegate: CarbEntryViewModelDelegate?
-    
+
     private lazy var cancellables = Set<AnyCancellable>()
-    
+
     /// Initalizer for when`CarbEntryView` is presented from the home screen
-    init(delegate: CarbEntryViewModelDelegate) {
+    init(delegate: CarbEntryViewModelDelegate, nocturneFavoriteFoodsClient: NocturneFavoriteFoodsClientProtocol = NocturneFavoriteFoodsClient()) {
         self.delegate = delegate
         self.absorptionTime = delegate.defaultAbsorptionTimes.medium
         self.defaultAbsorptionTimes = delegate.defaultAbsorptionTimes
         self.shouldBeginEditingQuantity = true
-        
+        self.nocturneFavoriteFoodsClient = nocturneFavoriteFoodsClient
+
         observeAbsorptionTimeChange()
         observeFavoriteFoodChange()
         observeFavoriteFoodIndexChange()
+        observeNocturneFavoriteFoodIndexChange()
         observeLoopUpdates()
     }
-    
+
     /// Initalizer for when`CarbEntryView` has an entry to edit
-    init(delegate: CarbEntryViewModelDelegate, originalCarbEntry: StoredCarbEntry) {
+    init(delegate: CarbEntryViewModelDelegate, originalCarbEntry: StoredCarbEntry, nocturneFavoriteFoodsClient: NocturneFavoriteFoodsClientProtocol = NocturneFavoriteFoodsClient()) {
         self.delegate = delegate
         self.originalCarbEntry = originalCarbEntry
         self.defaultAbsorptionTimes = delegate.defaultAbsorptionTimes
+        self.nocturneFavoriteFoodsClient = nocturneFavoriteFoodsClient
 
         self.carbsQuantity = originalCarbEntry.quantity.doubleValue(for: preferredCarbUnit)
         self.time = originalCarbEntry.startDate
@@ -112,7 +119,7 @@ final class CarbEntryViewModel: ObservableObject {
         self.absorptionTimeWasEdited = true
         self.usesCustomFoodType = true
         self.shouldBeginEditingQuantity = false
-        
+
         observeLoopUpdates()
     }
     
@@ -216,7 +223,7 @@ final class CarbEntryViewModel: ObservableObject {
         favoriteFoods.append(newStoredFood)
         selectedFavoriteFoodIndex = favoriteFoods.count - 1
     }
-    
+
     private func observeFavoriteFoodIndexChange() {
         $selectedFavoriteFoodIndex
             .receive(on: RunLoop.main)
@@ -226,7 +233,7 @@ final class CarbEntryViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     private func observeFavoriteFoodChange() {
         $favoriteFoods
             .dropFirst()
@@ -238,8 +245,12 @@ final class CarbEntryViewModel: ObservableObject {
     }
 
     private func favoriteFoodSelected(at index: Int) {
-        self.absorptionEditIsProgrammatic = true
         if index == -1 {
+            // A cloud favorite selection may be the reason this was reset to
+            // -1 (see nocturneFavoriteFoodSelected); if one is active, leave
+            // the fields it populated alone rather than blanking them.
+            guard selectedNocturneFavoriteFoodIndex == -1 else { return }
+            self.absorptionEditIsProgrammatic = true
             self.carbsQuantity = 0
             self.foodType = ""
             self.absorptionTime = defaultAbsorptionTimes.medium
@@ -247,15 +258,84 @@ final class CarbEntryViewModel: ObservableObject {
             self.usesCustomFoodType = false
         }
         else {
+            self.absorptionEditIsProgrammatic = true
             let food = favoriteFoods[index]
             self.carbsQuantity = food.carbsQuantity.doubleValue(for: preferredCarbUnit)
             self.foodType = food.foodType
             self.absorptionTime = food.absorptionTime
             self.absorptionTimeWasEdited = true
             self.usesCustomFoodType = true
+            if selectedNocturneFavoriteFoodIndex != -1 {
+                selectedNocturneFavoriteFoodIndex = -1
+            }
         }
     }
-    
+
+    // MARK: - Nocturne Favorite Foods
+    @MainActor func refreshNocturneFavorites() async {
+        do {
+            let favorites = try await nocturneFavoriteFoodsClient.fetchFavorites()
+            nocturneFavoriteFoods = favorites.filter { $0.type == "food" }
+        } catch {
+            // Any failure here (not configured, network, decode) leaves this
+            // screen's cloud picker simply absent rather than surfacing an
+            // error on the primary carb-entry path.
+            nocturneFavoriteFoods = []
+        }
+    }
+
+    private func observeNocturneFavoriteFoodIndexChange() {
+        $selectedNocturneFavoriteFoodIndex
+            .receive(on: RunLoop.main)
+            .dropFirst()
+            .sink { [weak self] index in
+                self?.nocturneFavoriteFoodSelected(at: index)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func nocturneFavoriteFoodSelected(at index: Int) {
+        if index == -1 {
+            // A local favorite selection may be the reason this was reset to
+            // -1 (see favoriteFoodSelected); if one is active, leave the
+            // fields it populated alone rather than blanking them.
+            guard selectedFavoriteFoodIndex == -1 else { return }
+            self.absorptionEditIsProgrammatic = true
+            self.carbsQuantity = 0
+            self.foodType = ""
+            self.absorptionTime = defaultAbsorptionTimes.medium
+            self.absorptionTimeWasEdited = false
+            self.usesCustomFoodType = false
+        }
+        else {
+            guard index < nocturneFavoriteFoods.count else { return }
+            self.absorptionEditIsProgrammatic = true
+            let food = nocturneFavoriteFoods[index]
+            self.carbsQuantity = food.carbs
+            self.foodType = food.name
+            self.absorptionTime = Self.nocturneAbsorptionTime(forGiLevel: food.gi, defaultAbsorptionTimes: defaultAbsorptionTimes)
+            self.absorptionTimeWasEdited = true
+            self.usesCustomFoodType = true
+            if selectedFavoriteFoodIndex != -1 {
+                selectedFavoriteFoodIndex = -1
+            }
+        }
+    }
+
+    /// Maps Nocturne's glycemic-index level (1=low, 2=medium, 3=high; see
+    /// Nocturne's `Food.Gi`) to one of Loop's three absorption-time presets:
+    /// low GI carbs absorb slowly, high GI carbs absorb quickly.
+    static func nocturneAbsorptionTime(forGiLevel gi: Int, defaultAbsorptionTimes: CarbStore.DefaultAbsorptionTimes) -> TimeInterval {
+        switch gi {
+        case ..<2:
+            return defaultAbsorptionTimes.slow
+        case 2:
+            return defaultAbsorptionTimes.medium
+        default:
+            return defaultAbsorptionTimes.fast
+        }
+    }
+
     // MARK: - Utility
     func restoreUserActivityState(_ activity: NSUserActivity) {
         if let entry = activity.newCarbEntry {

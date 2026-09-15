@@ -76,7 +76,7 @@ struct CarbEntryView: View, HorizontalSizeClassOverride {
                 if isNewEntry, FeatureFlags.allowExperimentalFeatures {
                     favoriteFoodsCard
                 }
-                
+
                 let isBolusViewActive = Binding(get: { viewModel.bolusViewModel != nil }, set: { _, _ in viewModel.bolusViewModel = nil })
                 NavigationLink(destination: bolusView, isActive: isBolusViewActive) {
                     EmptyView()
@@ -84,6 +84,11 @@ struct CarbEntryView: View, HorizontalSizeClassOverride {
                 .frame(width: 0, height: 0)
                 .opacity(0)
                 .accessibility(hidden: true)
+            }
+        }
+        .task {
+            if isNewEntry {
+                await viewModel.refreshNocturneFavorites()
             }
         }
         .alert(item: $viewModel.alert, content: alert(for:))
@@ -220,14 +225,14 @@ extension CarbEntryView {
                 if !viewModel.favoriteFoods.isEmpty {
                     VStack {
                         HStack {
-                            Text("Choose Favorite:", comment: "The label for the row where you choose saved Favorite Food")
-                            
+                            Text("Choose Favorite (local):", comment: "The label for the row where you choose a saved local Favorite Food")
+
                             let selectedFavorite = favoritedFoodTextFromIndex(viewModel.selectedFavoriteFoodIndex)
                             Text(selectedFavorite)
                                 .minimumScaleFactor(0.8)
                                 .frame(maxWidth: .infinity, alignment: .trailing)
                         }
-                        
+
                         if expandedRow == .favoriteFoodSelection {
                             Picker(String(""), selection: $viewModel.selectedFavoriteFoodIndex) {
                                 ForEach(-1..<viewModel.favoriteFoods.count, id: \.self) { index in
@@ -248,10 +253,45 @@ extension CarbEntryView {
                             }
                         }
                     }
-                    
+
                     CardSectionDivider()
                 }
-                
+
+                if !viewModel.nocturneFavoriteFoods.isEmpty {
+                    VStack {
+                        HStack {
+                            Text("Choose Favorite (cloud):", comment: "The label for the row where you choose a Nocturne favorite food")
+
+                            let selectedNocturneFavorite = nocturneFavoritedFoodTextFromIndex(viewModel.selectedNocturneFavoriteFoodIndex)
+                            Text(selectedNocturneFavorite)
+                                .minimumScaleFactor(0.8)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                        }
+
+                        if expandedRow == .nocturneFavoriteFoodSelection {
+                            Picker(String(""), selection: $viewModel.selectedNocturneFavoriteFoodIndex) {
+                                ForEach(-1..<viewModel.nocturneFavoriteFoods.count, id: \.self) { index in
+                                    Text(nocturneFavoritedFoodTextFromIndex(index))
+                                        .tag(index)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                        }
+                    }
+                    .onTapGesture {
+                        withAnimation {
+                            if expandedRow == .nocturneFavoriteFoodSelection {
+                                expandedRow = nil
+                            }
+                            else {
+                                expandedRow = .nocturneFavoriteFoodSelection
+                            }
+                        }
+                    }
+
+                    CardSectionDivider()
+                }
+
                 Button(action: saveAsFavoriteFood) {
                     Text("Save as favorite food", comment: "Button label for saving current carb entry as a new Favorite Food")
                         .frame(maxWidth: .infinity)
@@ -275,6 +315,16 @@ extension CarbEntryView {
         }
     }
     
+    private func nocturneFavoritedFoodTextFromIndex(_ index: Int) -> String {
+        if index == -1 {
+            return String(localized: "None", comment: "Indicates no favorite food is selected")
+        }
+        else {
+            let food = viewModel.nocturneFavoriteFoods[index]
+            return food.name
+        }
+    }
+
     private func saveAsFavoriteFood() {
         self.showAddFavoriteFood = true
     }
@@ -314,6 +364,6 @@ extension CarbEntryView {
 
 extension CarbEntryView {
     enum Row {
-        case amountConsumed, time, foodType, absorptionTime, favoriteFoodSelection
+        case amountConsumed, time, foodType, absorptionTime, favoriteFoodSelection, nocturneFavoriteFoodSelection
     }
 }
